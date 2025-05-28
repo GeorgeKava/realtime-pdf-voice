@@ -343,6 +343,7 @@ async function startWebRTC() {
  * Sends a 'session.update' event to the bot.
  * This configures the bot's instructions, persona, and available tools (functions).
  * It's called when the data channel opens.
+ * Configuration for instructions, tools, turn_detection, and tool_choice is fetched from the backend.
  */
 async function updateSession() {
     //logMessage('Updating session with bot instructions and tools...', 'system');
@@ -350,61 +351,39 @@ async function updateSession() {
         logMessage('Cannot update session: Data channel not open.', 'system');
         return;
     }
-    const event = {
-        type: "session.update",
-        session: {
-            instructions: `
-            You are Gary, a friendly and helpful assistant bot.
-            Your primary goal is to answer user questions.
-            User input will be provided via transcribed speech. The client will send a 'request.create' event with the transcribed text if needed, or the bot service handles transcription directly.
-            When you call a function (like fetch_pdf_document or handle_amazon_query_tool), the system will process it and then send you a 'response.create' event containing instructions and the information retrieved. 
-            You MUST use the information within the 'instructions' of that 'response.create' event to formulate a concise answer to the user's original question. 
-            Then, you MUST immediately initiate a new message to the user, using both text (for transcript) and audio (for voice) modalities, to deliver this answer. 
-            Do not wait for further input from the user after your function call has been processed and you have received the subsequent 'response.create' event; your job is to respond to the user with the information found.
-        `,
-            input_audio_transcription: {
-                model: CONFIG.TRANSCRIPTION_MODEL
-            },
-            turn_detection: {
-              type: 'server_vad',
-              threshold: 0.5,
-              prefix_padding_ms: 300,
-              silence_duration_ms: 350,
-              create_response: true
-            },
-            tools: [
-                {
-                    type: "function",
-                    name: "fetch_pdf_document",
-                    description: "Provides information about Apple's financials by searching the vector store based on the query from the user.",
-                    parameters: {
-                        type: "object",
-                        properties: {}, 
-                        required: []
-                    }
-                },
-                {
-                    type: "function",
-                    name: "handle_amazon_query_tool",
-                    description: "Provides information about Amazon's earnings by searching the vector store based on the query from the user.",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            search_query: {
-                                type: "string",
-                                description: "User query string."
-                            }
-                        },
-                        required: ["search_query"]
-                    }
-                }
-            ],
-            tool_choice: "auto"
+
+    try {
+        // Fetch session configuration (instructions, tools, etc.) from the backend
+        const response = await fetch('/get-session-configuration'); 
+        if (!response.ok) {
+            logMessage(`Error fetching session configuration: ${response.statusText} (${response.status})`, 'system');
+            console.error('Error fetching session configuration:', response);
+            // Consider sending a default or error state to the bot, or simply returning
+            return;
         }
-    };
-    //logMessage("Sending session.update to bot (details in console).", 'system');
-    console.log("Sending session.update: " + JSON.stringify(event, null, 2)); // Keep detailed log in console
-    dataChannel.send(JSON.stringify(event));
+        const configFromServer = await response.json();
+
+        const event = {
+            type: "session.update",
+            session: {
+                instructions: configFromServer.instructions,
+                input_audio_transcription: {
+                    model: configFromServer.transcription_model // Updated to use model from server config
+                },
+                turn_detection: configFromServer.turn_detection,
+                tools: configFromServer.tools,
+                tool_choice: configFromServer.tool_choice || "auto" // Fallback to "auto" if not provided
+            }
+        };
+        
+        //logMessage("Sending session.update to bot (details in console).", 'system');
+        console.log("Sending session.update with fetched configuration: " + JSON.stringify(event, null, 2)); 
+        dataChannel.send(JSON.stringify(event));
+
+    } catch (error) {
+        logMessage('Failed to update session with server configuration: ' + error, 'system');
+        console.error('Failed to update session with server configuration:', error);
+    }
 }
 
 /**

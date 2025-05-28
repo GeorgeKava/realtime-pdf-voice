@@ -28,6 +28,7 @@ from azure.search.documents.indexes.models import (
     SemanticField
 )
 from openai import AsyncAzureOpenAI # For embeddings
+from config import SESSION_CONFIGURATION # Added import
 
 # Setup logging first (MOVED AND ENHANCED from later in the file)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -303,7 +304,13 @@ async def favicon(request):
 @routes.get('/app.js') # ADDED ROUTE
 async def serve_app_js(request): # ADDED HANDLER
     """Serves the app.js file.""" # ADDED DOCSTRING
-    return web.FileResponse('templates/app.js') # ADDED RESPONSE
+    return web.FileResponse('static/app.js') # Corrected path to static/app.js
+
+@routes.get('/get-session-configuration') # ADDED ROUTE
+async def get_session_configuration(request): # ADDED HANDLER
+    """Serves the session configuration from config.py.""" # ADDED DOCSTRING
+    logger.info("Serving session configuration.")
+    return web.json_response(SESSION_CONFIGURATION)
 
 @routes.post('/start-session')
 async def start_session(request):
