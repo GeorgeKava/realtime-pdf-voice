@@ -1,6 +1,6 @@
-# Gary Bot - Azure OpenAI Real-Time Financial Assistant
+# Financial Bot - Azure OpenAI Real-Time Financial Assistant
 
-This project implements "Gary Bot," a web application that uses Azure OpenAI Real-Time services with WebRTC to provide a voice-interactive assistant. Gary Bot can answer questions about Apple's financials (using `FY25_Q2_Consolidated_Financial_Statements.pdf`) and Amazon's Q1 2025 earnings (using `AMZN-Q1-2025-Earnings-Release.pdf` and Azure AI Search).
+This project implements "Financial Bot," a web application that uses Azure OpenAI Real-Time services with WebRTC to provide a voice-interactive assistant. Financial Bot can answer questions about Apple's financials (using `FY25_Q2_Consolidated_Financial_Statements.pdf`) and Amazon's Q1 2025 earnings (using `AMZN-Q1-2025-Earnings-Release.pdf` and Azure AI Search).
 
 ## Key Features
 
@@ -83,7 +83,7 @@ This project implements "Gary Bot," a web application that uses Azure OpenAI Rea
 2.  **Open the frontend**:
     Open your web browser and navigate to `http://localhost:8080/` (or the port configured in `backend.py`).
 
-3.  **Interact with Gary Bot**:
+3.  **Interact with Financial Bot**:
     *   Click the "Start Session" button.
     *   The bot should greet you.
     *   You can then ask questions like:
