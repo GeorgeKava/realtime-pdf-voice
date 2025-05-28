@@ -11,7 +11,9 @@ This project implements "Gary Bot," a web application that uses Azure OpenAI Rea
         *   On startup, creating an Azure AI Search index if it doesn't exist.
         *   Processing `AMZN-Q1-2025-Earnings-Release.pdf` (chunking, embedding via Azure OpenAI) and uploading it to the search index.
         *   Performing vector search on this index when the user asks a relevant question.
-*   **Function Calling**: The bot uses "function calls" (simulated via specific event handling in the client) to trigger data retrieval for both Apple and Amazon queries.
+*   **Function Calling**: The bot uses "function calls" to trigger data retrieval for both Apple and Amazon queries.
+*   **Externalized Configuration**: Bot session parameters (instructions, tools, voice activity detection settings, transcription model) are managed in a central `config.py` file and fetched by the client on session start.
+*   **Enhanced Chat UI**: Chat messages are now styled and aligned based on the sender (user, bot, system) for better readability.
 
 ## Technologies Used
 
@@ -37,9 +39,13 @@ This project implements "Gary Bot," a web application that uses Azure OpenAI Rea
 .
 ├── AMZN-Q1-2025-Earnings-Release.pdf  # Amazon Q1 2025 earnings report
 ├── backend.py                         # Main Python backend (aiohttp server, Azure service logic)
+├── config.py                          # Bot session configurations
 ├── FY25_Q2_Consolidated_Financial_Statements.pdf # Apple Q2 FY25 financial statements
+├── static/
+│   ├── app.js                         # Frontend JavaScript for WebRTC and bot interaction
+│   └── style.css                      # CSS for frontend styling
 ├── templates/
-│   └── index.html                     # Frontend HTML, JavaScript for WebRTC and bot interaction
+│   └── index.html                     # Main HTML structure for the frontend
 └── README.md                          # This file
 ```
 
@@ -75,7 +81,7 @@ This project implements "Gary Bot," a web application that uses Azure OpenAI Rea
     The server will start, and on its first run (or if the Amazon index doesn't exist), it will attempt to create the Azure AI Search index and process/upload `AMZN-Q1-2025-Earnings-Release.pdf`. Monitor the console output for progress and any errors.
 
 2.  **Open the frontend**:
-    Open `templates/index.html` in a web browser that supports WebRTC (e.g., Chrome, Edge, Firefox).
+    Open your web browser and navigate to `http://localhost:8080/` (or the port configured in `backend.py`).
 
 3.  **Interact with Gary Bot**:
     *   Click the "Start Session" button.
@@ -86,14 +92,16 @@ This project implements "Gary Bot," a web application that uses Azure OpenAI Rea
 
 ## How It Works
 
-1.  **Session Initiation**: The frontend (`index.html`) requests an ephemeral key from the backend (`/start-session`) to connect to Azure OpenAI Real-Time services.
-2.  **WebRTC Connection**: A WebRTC peer connection is established, including a data channel for sending and receiving JSON-based events.
-3.  **Bot Instructions**: The client sends an initial `session.update` event to configure the bot's persona, instructions, and available tools (functions).
-4.  **User Interaction**:
+1.  **Session Initiation**: The frontend (`static/app.js` within `index.html`) requests an ephemeral key from the backend (`/start-session`) to connect to Azure OpenAI Real-Time services.
+2.  **Configuration Loading**: Before establishing the WebRTC connection, the client fetches bot session configurations (persona, tools, etc.) from the `/get-session-configuration` endpoint. This endpoint serves data from `config.py`.
+3.  **WebRTC Connection**: A WebRTC peer connection is established, including a data channel for sending and receiving JSON-based events.
+4.  **Bot Instructions**: The client sends an initial `session.update` event using the fetched configurations to set up the bot's persona, instructions, and available tools (functions).
+5.  **User Interaction**:
     *   The user speaks or types.
     *   The Azure service transcribes speech to text.
     *   The bot processes the user's query.
-5.  **Function Calling**:
+    *   The chat UI in `index.html` (styled by `static/style.css`) displays messages with sender-specific alignment and colors.
+6.  **Function Calling**:
     *   If the bot decides to use a tool (e.g., `fetch_pdf_document` for Apple, `handle_amazon_query_tool` for Amazon), it sends a `response.function_call_arguments.done` event to the client.
     *   **Apple Financials (`fetch_pdf_document`)**:
         *   The client's `handleFetchPdfContent()` function is triggered.
@@ -106,12 +114,12 @@ This project implements "Gary Bot," a web application that uses Azure OpenAI Rea
         *   The backend embeds the `search_query` using Azure OpenAI and performs a vector search on the `amazon-earnings-q1-2025-index` in Azure AI Search.
         *   Search results are returned to the client.
         *   The client summarizes these results and sends a `response.create` event to the bot, with the summary in the `instructions`, telling the bot to use this to answer.
-6.  **Bot Response**: The bot synthesizes an answer based on the information received (either from its general knowledge or the content provided via `response.create` after a function call) and sends it back to the client for text display and audio playback.
+7.  **Bot Response**: The bot synthesizes an answer based on the information received (either from its general knowledge or the content provided via `response.create` after a function call) and sends it back to the client for text display and audio playback.
 
 ## Important Notes
 
 *   **Error Handling**: The application includes basic error handling, but this can be further improved for robustness.
-*   **Security**: The hardcoded API keys in `backend.py` are for demonstration purposes only. **Never use hardcoded keys in production.** Use environment variables, Azure Key Vault, or other secure configuration management practices.
+*   **Security**: The hardcoded API keys in `backend.py` are for demonstration purposes only. **Never use hardcoded keys in production.** Use environment variables, Azure Key Vault, or other secure configuration management practices. The `SESSION_CONFIGURATION` in `config.py` also contains sensitive details like bot instructions and tool definitions; consider how these are managed in a production environment.
 *   **Azure Costs**: Be mindful of the costs associated with the Azure services used, especially Azure OpenAI and Azure AI Search, during development and if deployed.
 *   **PDF Parsing**: The current PDF text extraction is basic (`PyPDF2`). For more complex PDFs or higher accuracy, consider more advanced parsing libraries or Azure Form Recognizer.
 *   **Chunking Strategy**: The text chunking in `backend.py` for the Amazon PDF is simple. More sophisticated, semantically-aware chunking strategies could improve search relevance.

@@ -11,19 +11,20 @@ const logMessage = (text, sender = 'system') => {
     const logContainer = document.getElementById("logContainer");
     if (logContainer) {
         const messageEntryDiv = document.createElement("div");
-        messageEntryDiv.classList.add('message-entry'); // For overall structure of a log/chat line
+        messageEntryDiv.classList.add('message-entry'); 
+
+        // Apply sender-specific class to the messageEntryDiv for alignment
+        if (sender === 'user') {
+            messageEntryDiv.classList.add('user-message');
+        } else if (sender === 'bot') {
+            messageEntryDiv.classList.add('bot-message');
+        } else { // 'system' or any other
+            messageEntryDiv.classList.add('system-message');
+        }
 
         const messageBubbleDiv = document.createElement("div");
-        messageBubbleDiv.classList.add('message-bubble'); // The bubble itself
-
-        if (sender === 'user') {
-            messageBubbleDiv.classList.add('user-message');
-        } else if (sender === 'bot') {
-            messageBubbleDiv.classList.add('bot-message');
-        } else { // 'system' or any other
-            messageBubbleDiv.classList.add('system-message');
-            // CSS can style .system-message differently (e.g., plain text, centered, italic)
-        }
+        messageBubbleDiv.classList.add('message-bubble'); // Common class for all bubbles
+        // No longer add user-message, bot-message, or system-message directly to the bubble
 
         messageBubbleDiv.textContent = text;
         messageEntryDiv.appendChild(messageBubbleDiv);

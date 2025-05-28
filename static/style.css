@@ -71,7 +71,13 @@ body {
     gap: 10px; /* Space between chat bubbles */
 }
 
-.chat-message {
+.message-entry {
+    display: flex;
+    flex-direction: column; /* Stack bubble and sender if needed, or just use for alignment */
+    /* Removed margin-bottom, gap on logContainer handles spacing */
+}
+
+.message-bubble {
     padding: 10px 15px;
     border-radius: 18px; /* Rounded bubbles */
     max-width: 70%; /* Max width of a bubble */
@@ -80,32 +86,37 @@ body {
     word-wrap: break-word; /* Wrap long words */
 }
 
-.user-message {
-    /* display: none; */ /* Hide user messages */
-    background-color: #e0e0e0; /* Light grey for user, similar to image */
-    color: black;
-    align-self: flex-start; /* User messages on the left, like 'T' in image */
+.user-message .message-bubble {
+    background-color: green; /* Green for user */
+    color: white; /* Change text to white for better contrast with green */
     border-bottom-left-radius: 5px; /* Slightly less rounded on one corner */
 }
 
-.bot-message {
-    background-color: #007bff; /* Blue for bot, can be changed to green like image */
-    /* background-color: #28a745; */ /* Example: Green like the image */
+.user-message {
+    align-self: flex-start; /* User messages on the left */
+}
+
+.bot-message .message-bubble {
+    background-color: #007bff; /* Blue for bot */
     color: white;
-    align-self: flex-end; /* Bot messages on the right */
     border-bottom-right-radius: 5px; /* Slightly less rounded on one corner */
 }
 
-/* System logs can be styled differently if needed, or removed if logContainer is only for chat */
-.system-log-message {
-    /* display: none; */ /* Hide system logs */
-    font-size: 0.85em;
-    color: #6c757d; /* Grey color for system logs */
-    text-align: center;
-    padding: 5px 0;
-    margin: 2px 0;
-    width: 100%;
-    align-self: center;
+.bot-message {
+    align-self: flex-end; /* Bot messages on the right */
+}
+
+.system-message .message-bubble {
+    background-color: #f0f0f0; /* Lighter grey for system messages */
+    color: #555;
+    font-style: italic;
+    border-radius: 5px; /* Less pronounced bubble for system messages */
+}
+
+.system-message {
+    align-self: center; /* Center system messages */
+    width: fit-content; /* Adjust width to content for system messages */
+    max-width: 90%; /* Ensure system messages don't take full width if long */
 }
 
 
