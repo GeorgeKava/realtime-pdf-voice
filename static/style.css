@@ -1,0 +1,120 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.controls-panel {
+    width: 250px; /* Fixed width for the left panel */
+    padding: 20px;
+    background-color: #e9ecef;
+    border-right: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align buttons to the start */
+}
+
+.controls-panel h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.controls-panel button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-bottom: 10px; /* Space between buttons */
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%; /* Make buttons take full width of panel */
+    text-align: left;
+}
+
+.controls-panel button:hover {
+    background-color: #0056b3;
+}
+
+.transcript-panel {
+    flex-grow: 1; /* Takes up remaining space */
+    padding: 20px;
+    overflow-y: hidden; /* Hide main scrollbar, logContainer will scroll */
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.transcript-panel h2 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+#logContainer { /* This is now the chat message area */
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #fff; /* White background for the chat area */
+    overflow-y: auto; /* Scrollable chat messages */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between chat bubbles */
+}
+
+.chat-message {
+    padding: 10px 15px;
+    border-radius: 18px; /* Rounded bubbles */
+    max-width: 70%; /* Max width of a bubble */
+    line-height: 1.4;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    word-wrap: break-word; /* Wrap long words */
+}
+
+.user-message {
+    /* display: none; */ /* Hide user messages */
+    background-color: #e0e0e0; /* Light grey for user, similar to image */
+    color: black;
+    align-self: flex-start; /* User messages on the left, like 'T' in image */
+    border-bottom-left-radius: 5px; /* Slightly less rounded on one corner */
+}
+
+.bot-message {
+    background-color: #007bff; /* Blue for bot, can be changed to green like image */
+    /* background-color: #28a745; */ /* Example: Green like the image */
+    color: white;
+    align-self: flex-end; /* Bot messages on the right */
+    border-bottom-right-radius: 5px; /* Slightly less rounded on one corner */
+}
+
+/* System logs can be styled differently if needed, or removed if logContainer is only for chat */
+.system-log-message {
+    /* display: none; */ /* Hide system logs */
+    font-size: 0.85em;
+    color: #6c757d; /* Grey color for system logs */
+    text-align: center;
+    padding: 5px 0;
+    margin: 2px 0;
+    width: 100%;
+    align-self: center;
+}
+
+
+.warning-message {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px;
+    border: 1px solid #ffeeba;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}

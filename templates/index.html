@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure OpenAI Realtime Session</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="controls-panel">
+            <h2>Controls</h2>
+            <button id="startSessionBtn">Start Session</button>
+            <!-- The Close Session button will be added here by JavaScript -->
+        </div>
+        <div class="transcript-panel">
+            <h2>Conversation Transcript</h2>
+            <p class="warning-message">WARNING: Don't use this code sample in production with the API key hardcoded. Use a protected backend service to call the sessions API and generate the ephemeral key. Then return the ephemeral key to the client.</p>
+            <div id="logContainer"></div>
+        </div>
+    </div>
+    <script src="../static/app.js" defer></script>
+</body>
+</html>
