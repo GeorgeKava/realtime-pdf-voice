@@ -492,4 +492,5 @@ app.on_startup.append(initialize_amazon_search_index)
 app.router.add_static('/static', path='static')
 
 if __name__ == '__main__':
-    web.run_app(app, port=8080, host='127.0.0.1')
+    # web.run_app(app, port=8080, host='127.0.0.1')
+    web.run_app(app, port=8080, host='0.0.0.0')

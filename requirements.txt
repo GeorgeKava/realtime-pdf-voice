@@ -1,0 +1,6 @@
+aiohttp
+PyPDF2
+openai
+azure-core
+azure-search-documents
+python-dotenv
